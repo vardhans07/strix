@@ -170,10 +170,12 @@ def test_routes_through_litellm_matches_the_provider(
     assert isinstance(model, LitellmModel) is litellm
 
 def test_api_type_override_settings() -> None:
-    from strix.config.settings import LlmSettings, Settings
+    from strix.config.settings import Settings
     from strix.config.models import uses_chat_completions_tool_schema
-    settings_chat = Settings(llm=LlmSettings(api_type="chat_completions", model="gpt-4"))
+    settings_chat = Settings(llm=Settings.LlmSettings(api_type="chat_completions", model="gpt-4"))
     assert uses_chat_completions_tool_schema("gpt-4", settings_chat) is True
-    settings_resp = Settings(llm=LlmSettings(api_type="responses", model="openai/gpt-4"))
+    settings_resp = Settings(llm=Settings.LlmSettings(api_type="responses", model="openai/gpt-4"))
     assert uses_chat_completions_tool_schema("openai/gpt-4", settings_resp) is False
+    settings_non_openai = Settings(llm=Settings.LlmSettings(api_type="responses", model="anthropic/claude-3-5-sonnet"))
+    assert uses_chat_completions_tool_schema("anthropic/claude-3-5-sonnet", settings_non_openai) is True
     
